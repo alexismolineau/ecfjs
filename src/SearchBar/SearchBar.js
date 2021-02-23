@@ -8,20 +8,54 @@ const SearchBar = props => {
 
     const [inputValue, setInputValue] = useState(''); 
     const [filterValue, setFilterValue] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [offsetValue, setOffsetValue] = useState(0);
+
+    const requestApi = props.request()
 
     const handleSearchButtonClick = event => {
         event.preventDefault();
-        console.log("submit");
+        setLoading(true);
+        requestApi(inputValue, filterValue, offsetValue)
+            .then(
+                results => props.setSearchResults(results)
+            )
+            .then(
+                setLoading(false)
+            )
+            .catch(error => setError(error));
     }
+
+
 
     const getInputValue = value => {
         setInputValue(value);
     }
 
     const getDropdownValue = value => {
-        setFilterValue(value);
-        console.log(value);
-    }
+        let formatedValue = '';
+        switch(value){
+            case 'Artiste':
+                formatedValue = 'artistname';
+                break;
+            case 'Titre':
+                formatedValue = 'recording';
+                break;
+            case 'Album':
+                formatedValue = 'release';
+                break;
+            case 'Aucun Filtre':
+                formatedValue = 'all'
+                break;
+            default:
+                formatedValue = '';
+        }
+        setFilterValue(formatedValue);
+        console.log(formatedValue);
+        }
+
+    
 
 
     return(

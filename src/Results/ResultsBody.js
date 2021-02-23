@@ -4,35 +4,29 @@ import ResultsBodyLine from './ResultsBodyLine';
 
 const ResultsBody = props => {
 
-    const fakeResults = [
-        {
-        "firstname": "Claudina",
-        "lastname": "Ioab",
-        "city": "La Serena"
-        },
-        {
-            "firstname": "Claudina",
-            "lastname": "Ioab",
-            "city": "La Serena"
-        },
-        {
-            "firstname": "Roz",
-            "lastname": "Sherrie",
-            "city": "Mendoza"
-        },
-        {
-            "firstname": "Emma",
-            "lastname": "Ardra",
-            "city": "Liverpool"
-        }
-    ]
+
+    console.log(props.searchResults)
+
 
     return(
         <tbody>
-            {fakeResults.map(
-                (result, index) => <ResultsBodyLine index={index + 1} titre={result.firstname} artiste={result.lastname} album={result.city} key={index} handleDisplayModal={props.handleDisplayModal}/>
-            )} 
+            {
+            props.searchResults.recordings?
+                props.searchResults.recordings.length === 0 ?
+                <tr>
+                    <td colSpan="5">La recherche n'a retourné aucun résultat</td>
+                </tr>
+                :
+                props.searchResults.recordings.map(
+                    (result, index) => <ResultsBodyLine index={index + 1} titre={result.title ? result.title : '-'} artiste={result["artist-credit"] ? result["artist-credit"][0].artist.name : "-"} album={result.releases ? result.releases[0].title : '-'} key={index} handleDisplayModal={props.handleDisplayModal}/>
+                )
+            : 
+            <tr>
+                <td colSpan="5">Commencez par effectuer une recherche</td>
+            </tr>
+            }
         </tbody>
+
     )
 
 }
