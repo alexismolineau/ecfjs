@@ -4,7 +4,7 @@ const Input = props => {
 
 
     return(
-        <input className="col-8" type="search" placeholder="Rechercher" onInput={event => props.getInputValue(event.target.value)} />
+        <input className="col-lg-8 mb-2 mb-lg-0" type="search" placeholder="Rechercher" onInput={event => props.getInputValue(event.target.value)} />
     )
 }
 

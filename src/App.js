@@ -1,22 +1,55 @@
-import logo from './logo.svg';
 import './App.css';
 import SearchBar from './SearchBar/SearchBar';
 import Header from './Header/Header';
 import Results from './Results/Results';
-import Request from './Utils/Request';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import Loading from './Utils/Loading';
 
 function App() {
 
-  const [searchResults, setSearchResults] = useState({});
-  const [firstRequestMade, setFirstRequestMade] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isScrolling, setIsScrolling] = useState(false);
+
+  //methode pour savoir si l'on affiche le composant Loading à l'utilisateur
+  const setLoadingState = statut => {
+    setIsLoading(statut);
+  }
+
+  //methode pour continuer à charger la page lors du scroll de l'utilisateur
+  const handleScroll = event => {
+
+    //dernier rempart de l'humanité pour éviter les appels d'API infinis
+    if(isLoading){
+      return;
+    }
+
+    if(window.scrollY > document.body.clientHeight * 0.8){
+      setIsScrolling(true);
+    }
+    else {
+      setIsScrolling(false);
+    }
+  }
+
+  const handleLastResult = () => {
+    if(searchResults.recordings && searchResults.count === searchResults.recordings.length){
+      searchResults.recordings = [...searchResults.recordings].concat([{title: 'Pas plus de résultats... essayez une autre recherche =)'}]);
+      setSearchResults(searchResults);
+    }
+  }
+
+  useEffect(
+    () => handleLastResult()
+  )
 
 
   return (
-    <div className="App container-fluid">
+    <div className="App container-fluid" onWheel={event => handleScroll(event)}>
       <Header />
-      <SearchBar  request={Request} setSearchResults={setSearchResults}/>
-      <Results searchResults={searchResults}/>
+      <Loading isLoading={isLoading}/>
+      <SearchBar setSearchResults={setSearchResults} isLoading={isLoading} setLoadingState={setLoadingState} isScrolling={isScrolling} setIsScrolling={setIsScrolling}/>
+      <Results searchResults={searchResults} setLoadingState={setLoadingState}/>
     </div>
   );
 }

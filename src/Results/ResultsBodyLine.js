@@ -3,6 +3,7 @@ import Button from '../Utils/Button';
 
 const ResultsBodyLine = props => {
 
+    //methode de gestion des clics pour afficher la Modal
     const showModal = event => {
         event.preventDefault();
         props.handleDisplayModal();
@@ -15,13 +16,18 @@ const ResultsBodyLine = props => {
         </svg>
 
     return(
-    <tr>
-        <th scope="row">{props.index}</th>
-        <td>{props.titre}</td>
-        <td>{props.artiste}</td>
-        <td>{props.album}</td>
-        <td><Button btnContent={btnIcon} classList={"btn btn-light"} type="button" method={showModal}/></td>
-    </tr>
+        props.count !== props.index -1 ?
+            <tr>
+                <th scope="row">{props.index}</th>
+                <td>{props.titre}</td>
+                <td>{props.artiste}</td>
+                <td>{props.album}</td>
+                <td><Button btnContent={btnIcon} classList={"btn btn-light"} type="button" method={showModal}/></td>
+            </tr>
+        :
+            <tr>
+                <th scope="row" colSpan="5">{props.titre}</th>
+            </tr>
 
     )
 

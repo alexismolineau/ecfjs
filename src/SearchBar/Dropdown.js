@@ -7,17 +7,20 @@ const Drowpdown = props => {
     const [dropdownContent, setDropdownContent] = useState('Aucun filtre');
     const [dropdownClicked, setDropdownClicked] = useState(false);
 
+
+    //méthode de gestion des clics sur le dropdown menu
     const handleDropdownButtonClick = () => {
         setDropdownClicked(!dropdownClicked)
     }
 
+    //à chaque rendu, on renvoie la valeur sélectionnée à Searchbar
     useEffect(() => {
         props.getDropdownValue(dropdownContent);
     })
 
 
     return(
-        <div className="dropdown col-2">
+        <div className="dropdown col-6">
             <Button classList={"btn btn-secondary dropdown-toggle"} type={"button"} ariaExpended={false} btnId={"#dropdownChoices"} btnContent={dropdownContent} method={handleDropdownButtonClick}/>
 
             {dropdownClicked ? 

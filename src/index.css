@@ -43,3 +43,8 @@ body{
 .modal {
   display: block;
 }
+
+.spinner-border{
+  width: 5em;
+  height: 5em;
+}
