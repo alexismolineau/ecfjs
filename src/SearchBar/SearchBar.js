@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import Drowpdown from './Dropdown';
 import Input from './Input';
 import Button from '../Utils/Button';
-import Request from '../Utils/Request';
+import SearchRequest from '../Utils/SearchRequest';
 
 const SearchBar = props => {
 
@@ -14,7 +14,7 @@ const SearchBar = props => {
     const [oldRequest, setOldRequest] = useState([]);
 
     //instanciation de Request
-    const requestApi = Request();
+    const requestApi = SearchRequest();
 
     //fonction d'appel à la méthode parente pour mettre à jour le statut en chargement
     const setLoadingStatut = statut => {props.setLoadingState(statut)};
@@ -52,7 +52,6 @@ const SearchBar = props => {
         setLoadingStatut(true);
         props.setIsScrolling(false);
 
-        console.log('appel api')
         requestApi(inputValue, filterValue, offsetValue + 100)
             .then(
                 results => {

@@ -6,8 +6,8 @@ const ResultsBodyLine = props => {
     //methode de gestion des clics pour afficher la Modal
     const showModal = event => {
         event.preventDefault();
-        props.handleDisplayModal();
-        console.log(props)
+        props.handleDisplayModal(props.result);
+        console.log(props.result)
     }
 
     const btnIcon = 
