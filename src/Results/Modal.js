@@ -2,25 +2,48 @@ import React, { useEffect, useState } from 'react';
 
 import Button from '../Utils/Button';
 import LookupRequest from '../Utils/LookupRequest';
+import CoverRequest from '../Utils/CoverRequest';
 
 const Modal = props => {
 
     const [genresAndRatings, setGenresAndRatings] = useState({});
-
-    const requestApi = LookupRequest();
+    const [cover, setCover] = useState([]);
+    
+    const requestMusicBrainz = LookupRequest();
+    const requestCover = CoverRequest();
 
     const updateModal = () => {
-        if(props.modalData.releases && genresAndRatings.id !== props.modalData.releases[0]['release-group'].id){
-            requestApi(props.modalData.releases[0]['release-group'].id)
+        if(props.modalData.id && genresAndRatings.id !== props.modalData.id){
+            requestMusicBrainz(props.modalData.id)
                 .then(
                     results => setGenresAndRatings(results)
                 )
+                .then(props.setLoadingState(false));
+            if(props.modalData.releases){
+                const arrayResults = [];
+                props.modalData.releases.map(
+                    (release, index) => requestCover(release.id)
+                        .then(results => arrayResults[index] = results)
+                        .then(setCover(arrayResults))
+                )
+            }
+
+            
+        }
+        else if(props.displayModal && !props.modalData.id)
+        {
+            setGenresAndRatings({});
+            props.setLoadingState(false);
+        }
+        else {
+            props.setLoadingState(false);
         }
     }
 
     useEffect(
-        () => updateModal()
-    )
+        () => {updateModal()}, [props.displayModal]
+    );
+
 
     return(
 
@@ -36,7 +59,7 @@ const Modal = props => {
                     </div>
                     <div className="modal-body">
                         <div className="informations container">
-                            <table className="table table-striped">
+                            <table className="table table-striped align-middle">
                                 <tbody>
                                     <tr>
                                         <th scope="row">
@@ -48,23 +71,31 @@ const Modal = props => {
                                     </tr>
                                     <tr>
                                         <th scope="row">
-                                            {props.modalData['artist-credit'].length < 2 ? 'Artiste' : 'Artistes'}
+                                            {props.modalData['artist-credit'] ? props.modalData['artist-credit'].length < 2 ? 'Artiste' : 'Artistes' : "Artiste"}
                                         </th>
                                         <td>
-                                        {props.modalData['artist-credit'].map(
-                                            artist => artist.joinphrase ? artist.name + artist.joinphrase : artist.name
-                                        )}
+                                        {props.modalData['artist-credit'] ?
+                                            props.modalData['artist-credit'].map(
+                                                artist => artist.joinphrase ? artist.name + artist.joinphrase : artist.name
+                                            )
+                                            :
+                                            "-"
+                                        }
                                         </td>
                                     </tr>
                                     <tr>
                                         <th scope="row">
-                                            {props.modalData.releases.length < 2 ? 'Album' : 'Albums'}
+                                            {props.modalData.releases ? props.modalData.releases.length < 2 ? 'Album' : 'Albums' : 'Album'}
                                         </th>
                                         <td>
                                         {
-                                        props.modalData.releases.map(
-                                            (album, index ) => props.modalData.releases.length === index + 1 ? album.title : album.title + " - "
-                                        )}
+                                        props.modalData.releases ?
+                                            props.modalData.releases.map(
+                                                (album, index ) => props.modalData.releases.length === index + 1 ? album.title : album.title + " - "
+                                            )
+                                            :
+                                            "-"    
+                                        }
                                         </td>
                                     </tr>
                                     <tr>
@@ -72,8 +103,7 @@ const Modal = props => {
                                             Durée
                                         </th>
                                         <td>
-                                            //TODO gérer les cas de NaN
-                                        {parseInt(props.modalData.length / 60000) + 'm' + parseInt((props.modalData.length % 60000)/1000) + 's'}
+                                        {props.modalData.length ? parseInt(props.modalData.length / 60000) + 'm' + parseInt((props.modalData.length % 60000)/1000) + 's' : "-"}
                                         </td>
                                     </tr>
                                     <tr>
@@ -81,7 +111,21 @@ const Modal = props => {
                                             Note
                                         </th>
                                         <td>
-                                            {genresAndRatings.rating.value}
+                                            {genresAndRatings.rating && genresAndRatings.rating.value ? genresAndRatings.rating.value + "/5 (" + genresAndRatings.rating['votes-count'] + ")"   : "pas de note"}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">
+                                            Genre
+                                        </th>
+                                        <td>
+                                            {genresAndRatings.genres && genresAndRatings.genres.length > 0 ? 
+                                                genresAndRatings.genres.map(
+                                                    (genre, index ) => genresAndRatings.genres.length === index + 1 ? genre.name : genre.name + " - "
+                                                )
+                                            :
+                                            "-"
+                                            }
                                         </td>
                                     </tr>
                                 </tbody>

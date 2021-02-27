@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import ResultsBody from './ResultsBody';
 import ResultsHeader from './ResultsHeader';
 import Modal from './Modal';
-import LookupRequest from '../Utils/LookupRequest';
 
 const Results = props => {
 
@@ -12,11 +11,17 @@ const Results = props => {
     //méthode pour afficher la modal ou non
     const handleDisplayModal = data => {
         setModalData(data);
-
         setDisplayModal(!displayModal);
-        console.log(data);
-
+        if(data.id){
+            props.setLoadingState(true);
+        }
+        else {
+            props.setLoadingState(false);
+        }
     }
+
+
+
 
 
 
@@ -27,7 +32,7 @@ const Results = props => {
                 <ResultsHeader />
                 <ResultsBody handleDisplayModal={handleDisplayModal} searchResults={props.searchResults} setLoadingState={props.setLoadingState} count={props.searchResults.count}/>
             </table>
-            <Modal displayModal={displayModal} handleDisplayModal={handleDisplayModal} modalData={modalData}/>
+            <Modal displayModal={displayModal} handleDisplayModal={handleDisplayModal} modalData={modalData} setLoadingState={props.setLoadingState}/>
         </div>
     )
 }
