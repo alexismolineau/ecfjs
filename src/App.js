@@ -10,6 +10,8 @@ function App() {
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isScrolling, setIsScrolling] = useState(false);
+  const [jquery, setJquery] = useState(false);
+
 
   //methode pour savoir si l'on affiche le composant Loading à l'utilisateur
   const setLoadingState = statut => {
@@ -43,13 +45,20 @@ function App() {
     () => handleLastResult()
   )
 
+  //blah
+  const $ = () => {
+    console.log('blah')
+      setJquery(true);
+    }
+
+
 
   return (
     <div className="App container-fluid" onWheel={event => handleScroll(event)}>
       <Header />
       <Loading isLoading={isLoading}/>
-      <SearchBar setSearchResults={setSearchResults} isLoading={isLoading} setLoadingState={setLoadingState} isScrolling={isScrolling} setIsScrolling={setIsScrolling}/>
-      <Results searchResults={searchResults} setLoadingState={setLoadingState}/>
+      <SearchBar setSearchResults={setSearchResults} isLoading={isLoading} setLoadingState={setLoadingState} isScrolling={isScrolling} setIsScrolling={setIsScrolling} $={$}/>
+      <Results searchResults={searchResults} setLoadingState={setLoadingState} jquery={jquery}/>
     </div>
   );
 }

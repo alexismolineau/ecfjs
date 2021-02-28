@@ -12,12 +12,11 @@ const SearchRequest = () => {
             //pas de strict search pour pouvoir chercher par exemple avec l'artiste + le nom du titre
             return await fetch(`${MUSIC_BRAINZ_API}?query=recording:${searchTerm} OR artistname:${searchTerm} OR release:${searchTerm}&limit=100&offset=${offset}&fmt=json`)
             .then(response => response.json())
-            .catch(error => console.log(error));
         }
         return await fetch(`${MUSIC_BRAINZ_API}?query=${searchFilter}:"${searchTerm}"&limit=100&offset=${offset}&fmt=json`)
             .then(response => response.json())
-            .catch(error => console.log(error))
-    }
+        
+        }
 
     //retourne la méthode d'appel pour pouvoir l'utiliser dans les composants fonctionnels
     return requestByRecording

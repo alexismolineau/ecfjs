@@ -4,8 +4,6 @@ const CoverRequest = () => {
 
     const requestCoverById = async id => {
         return await fetch(`${COVER_API}${id}`)
-        .then(response => response.json())
-        .catch(error => console.log(error))
     }
 
     return requestCoverById;

@@ -30,9 +30,9 @@ const Results = props => {
             <span className="badge bg-secondary mb-3">Résultats: {props.searchResults.count ? props.searchResults.count : 0}</span>
             <table className="table table-dark table-striped col-12 align-middle">
                 <ResultsHeader />
-                <ResultsBody handleDisplayModal={handleDisplayModal} searchResults={props.searchResults} setLoadingState={props.setLoadingState} count={props.searchResults.count}/>
+                <ResultsBody handleDisplayModal={handleDisplayModal} searchResults={props.searchResults} setLoadingState={props.setLoadingState} count={props.searchResults.count} jquery={props.jquery}/>
             </table>
-            <Modal displayModal={displayModal} handleDisplayModal={handleDisplayModal} modalData={modalData} setLoadingState={props.setLoadingState}/>
+            <Modal displayModal={displayModal} handleDisplayModal={handleDisplayModal} modalData={modalData} setLoadingState={props.setLoadingState} jquery={props.jquery}/>
         </div>
     )
 }

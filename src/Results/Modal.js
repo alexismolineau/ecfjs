@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 
 import Button from '../Utils/Button';
+import Cover from './Cover';
+
 import LookupRequest from '../Utils/LookupRequest';
 import CoverRequest from '../Utils/CoverRequest';
 
 const Modal = props => {
 
+    const [error, setError] = useState(null);
     const [genresAndRatings, setGenresAndRatings] = useState({});
     const [cover, setCover] = useState([]);
     
@@ -13,31 +16,43 @@ const Modal = props => {
     const requestCover = CoverRequest();
 
     const updateModal = () => {
+
+        if(!props.displayModal){
+            setCover([]);
+        }
+
         if(props.modalData.id && genresAndRatings.id !== props.modalData.id){
             requestMusicBrainz(props.modalData.id)
-                .then(
-                    results => setGenresAndRatings(results)
-                )
-                .then(props.setLoadingState(false));
-            if(props.modalData.releases){
-                const arrayResults = [];
-                props.modalData.releases.map(
-                    (release, index) => requestCover(release.id)
-                        .then(results => arrayResults[index] = results)
-                        .then(setCover(arrayResults))
-                )
-            }
-
-            
+                .then(response => response.json())
+                .then(results => setGenresAndRatings(results))
+                .catch(error => setError('Erreur lors de l\'appel à l\'API MusicBrainz'));
         }
         else if(props.displayModal && !props.modalData.id)
         {
             setGenresAndRatings({});
-            props.setLoadingState(false);
+        }
+
+        if(props.modalData.releases){      
+            props.modalData.releases.map(
+                (release, index) => 
+                    index+1 === props.modalData.releases.length ? 
+                    requestCover(release.id)
+                        .then(response => response.json())
+                        .then(results => {cover[index] = results})
+                        .then(() => setCover([...cover]))
+                        .catch(error => setError('Album non trouvé'))
+                        .finally(() => props.setLoadingState(false))
+                    :
+                    requestCover(release.id)
+                    .then(response => response.json())
+                    .then(results => {cover[index] = results})
+                    .then(() => setCover([...cover]))
+            )
         }
         else {
             props.setLoadingState(false);
         }
+
     }
 
     useEffect(
@@ -45,16 +60,26 @@ const Modal = props => {
     );
 
 
-    return(
 
-        
-        
+
+    return(
+        props.jquery ?
+        <div className="modal fade show ">
+            <div className="modal-dialog modal-dialog-scrollable">
+                <div className="modal-content">
+                    <div className="modal-header">
+                        <h2>Blah</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        :
         props.displayModal ?
         <div className="modal fade show ">
             <div className="modal-dialog modal-dialog-scrollable">
                 <div className="modal-content">
                     <div className="modal-header">
-                        <h5 className="modal-title">{props.modalData['artist-credit'][0].name} - {props.modalData.title}</h5>
+                        <h2 className="modal-title h4">{props.modalData['artist-credit'] ? props.modalData['artist-credit'][0].name : null} - {props.modalData.title ? props.modalData.title : null}</h2>
                         <Button type={"button"} classList={"btn-close"} ariaLabel={"Close"} method={props.handleDisplayModal}/>
                     </div>
                     <div className="modal-body">
@@ -130,6 +155,24 @@ const Modal = props => {
                                     </tr>
                                 </tbody>
                             </table>
+                            <div className="container">
+                                <h3 className="h5">Images d'albums</h3>
+                                {console.log(cover)}
+
+                                {
+                                    cover[0] && Object.keys(cover[0]).length > 0 ?
+                                        cover.map(
+                                            (images) => images && images.images ? images.images.map(
+                                                (image, index) => <Cover thumbnails={image.thumbnails} id={image.id} key={index} />
+                                            )
+                                            :
+                                            null
+                                        )
+                                    :
+                                        <div>Pas d'image d'album</div>
+                                }
+
+                            </div>
                         </div>
                     </div>
                     <div className="modal-footer">

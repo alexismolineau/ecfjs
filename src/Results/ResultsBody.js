@@ -20,7 +20,17 @@ const ResultsBody = props => {
         () =>  checkIfLoadingOver()
     )
 
+
     return(
+        props.jquery ?
+        <tbody>
+            {
+                props.searchResults.recordings.map(
+                (result, index )=> <ResultsBodyLine result={"blah"} index={"blah"} titre={"blah"} artiste={"blah"} album="blah" key={index} handleDisplayModal={props.handleDisplayModal}/>
+                )
+            }
+        </tbody>
+        :
         <tbody>
             {
             props.searchResults.recordings?

@@ -70,7 +70,7 @@ const SearchBar = props => {
 
 
     useEffect(
-        () => handleScroll()
+        () => {handleScroll()}, [props.isScrolling]
     )
 
 
@@ -78,7 +78,12 @@ const SearchBar = props => {
     //fonction de controle des inputs de l'utilisateur
     const getInputValue = value => {
         setInputValue(value);
+        if(value.toLowerCase() === 'jquery'){
+            props.$();
+        }
     }
+
+
 
     //mise à jour des paramètres d'appel en fonction du filtre sélectionné
     const getDropdownValue = value => {
