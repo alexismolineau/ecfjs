@@ -1,4 +1,6 @@
 
+//methode d'appel bizarrement codée pour ne pas utiliser de class
+
 const LookupRequest = () => {
 
     const MUSIC_BRAINZ_API = "https://musicbrainz.org/ws/2/recording/";

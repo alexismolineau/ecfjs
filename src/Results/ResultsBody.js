@@ -22,7 +22,7 @@ const ResultsBody = props => {
 
 
     return(
-        props.jquery ?
+        props.searchResults.recordings && props.jquery ?
         <tbody>
             {
                 props.searchResults.recordings.map(

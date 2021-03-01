@@ -1,17 +1,20 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import Drowpdown from './Dropdown';
 import Input from './Input';
 import Button from '../Utils/Button';
 import SearchRequest from '../Utils/SearchRequest';
+import {ErrorContext} from '../Context/ErrorContext';
 
 const SearchBar = props => {
 
 
-    const [inputValue, setInputValue] = useState(''); 
+    const [inputValue, setInputValue] = useState('');
+    const [searchValue, setSearchValue] = useState('');
     const [filterValue, setFilterValue] = useState('');
-    const [error, setError] = useState(null);
     const [offsetValue, setOffsetValue] = useState(0);
     const [oldRequest, setOldRequest] = useState([]);
+
+    const errorContext = useContext(ErrorContext);
 
     //instanciation de Request
     const requestApi = SearchRequest();
@@ -23,6 +26,7 @@ const SearchBar = props => {
     //on enclenche l'appel à musicbrainz au clic du bouton rechercher
     const handleSearchButtonClick = event => {
         event.preventDefault();
+        setSearchValue(inputValue);
         setLoadingStatut(true);
         requestApi(inputValue, filterValue, 0)
             .then(
@@ -36,7 +40,7 @@ const SearchBar = props => {
                     setOffsetValue(0);
                 }
             )
-            .catch(error => setError(error))
+            .catch(error => errorContext.updateError('danger', error, true))
     }
 
 
@@ -52,7 +56,7 @@ const SearchBar = props => {
         setLoadingStatut(true);
         props.setIsScrolling(false);
 
-        requestApi(inputValue, filterValue, offsetValue + 100)
+        requestApi(searchValue, filterValue, offsetValue + 100)
             .then(
                 results => {
                     results.recordings = [...oldRequest.recordings].concat(results.recordings);
@@ -63,7 +67,7 @@ const SearchBar = props => {
             .then(
                 () => setOffsetValue(offsetValue + 100)
             )
-            .catch(error => setError(error))
+            .catch(error => errorContext.updateError('danger', error, true))
                 
     }
 

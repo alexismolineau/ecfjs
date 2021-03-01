@@ -1,16 +1,22 @@
 import './App.css';
+import { useEffect, useState } from 'react';
+import {ErrorContext} from './Context/ErrorContext';
 import SearchBar from './SearchBar/SearchBar';
 import Header from './Header/Header';
 import Results from './Results/Results';
-import { useEffect, useState } from 'react';
 import Loading from './Utils/Loading';
+import AlertError from './Utils/AlertError';
 
-function App() {
+const App = () => {
 
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isScrolling, setIsScrolling] = useState(false);
-  const [jquery, setJquery] = useState(false);
+  const [error, setError] = useState({    
+    errorType: "",
+    errorMsg: "",
+    display: false});
+  const [jquery, setJquery] = useState(false); //blah
 
 
   //methode pour savoir si l'on affiche le composant Loading à l'utilisateur
@@ -45,21 +51,38 @@ function App() {
     () => handleLastResult()
   )
 
+  const updateError = (type, msg, display) => {
+    setError({
+      errorType: type,
+      errorMsg: msg,
+      display
+    });
+  }
+
+  const contextValue = {
+    error,
+    updateError
+  }
+
   //blah
   const $ = () => {
-    console.log('blah')
+    alert('blah')
       setJquery(true);
+      updateError("danger", "$ERROR : fuis avant que les blahs ne te rattrapent", true);
     }
 
 
 
   return (
-    <div className="App container-fluid" onWheel={event => handleScroll(event)}>
-      <Header />
-      <Loading isLoading={isLoading}/>
-      <SearchBar setSearchResults={setSearchResults} isLoading={isLoading} setLoadingState={setLoadingState} isScrolling={isScrolling} setIsScrolling={setIsScrolling} $={$}/>
-      <Results searchResults={searchResults} setLoadingState={setLoadingState} jquery={jquery}/>
-    </div>
+    <ErrorContext.Provider value={contextValue}>
+      <div className="App container-fluid" onWheel={event => handleScroll(event)}>
+        <Header />
+        <AlertError/>
+        <Loading isLoading={isLoading}/>
+        <SearchBar setSearchResults={setSearchResults} isLoading={isLoading} setLoadingState={setLoadingState} isScrolling={isScrolling} setIsScrolling={setIsScrolling} $={$}/>
+        <Results searchResults={searchResults} setLoadingState={setLoadingState} jquery={jquery}/>
+      </div>
+    </ErrorContext.Provider>
   );
 }
 

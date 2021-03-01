@@ -52,3 +52,7 @@ body{
 .position-fixed.top-50.start-50.translate-middle{
   z-index: 1120;
 }
+
+.alert{
+  z-index: 1119;
+}

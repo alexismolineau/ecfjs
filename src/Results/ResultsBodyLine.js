@@ -7,7 +7,6 @@ const ResultsBodyLine = props => {
     const showModal = event => {
         event.preventDefault();
         props.handleDisplayModal(props.result);
-        console.log(props.result)
     }
 
     const btnIcon = 

@@ -1,9 +1,8 @@
-
+//methode d'appel bizarrement codée pour ne pas utiliser de class
 
 const SearchRequest = () => {
 
     const MUSIC_BRAINZ_API = "https://musicbrainz.org/ws/2/recording/";
-    const COVER_ART_ARCHIVE_API = "http://coverartarchive.org/";
 
     
     //méthode d'appel à l'api de musicbrainz. Prend en paramètre l'input, le filtre et l'offset
@@ -19,8 +18,8 @@ const SearchRequest = () => {
         }
 
     //retourne la méthode d'appel pour pouvoir l'utiliser dans les composants fonctionnels
-    return requestByRecording
+    return requestByRecording;
 
 }
 
-export default SearchRequest
+export default SearchRequest;

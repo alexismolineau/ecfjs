@@ -1,20 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import Button from '../Utils/Button';
 import Cover from './Cover';
+import { ErrorContext } from '../Context/ErrorContext';
 
 import LookupRequest from '../Utils/LookupRequest';
 import CoverRequest from '../Utils/CoverRequest';
 
 const Modal = props => {
 
-    const [error, setError] = useState(null);
     const [genresAndRatings, setGenresAndRatings] = useState({});
     const [cover, setCover] = useState([]);
-    
+
+    const errorContext = useContext(ErrorContext);
+
     const requestMusicBrainz = LookupRequest();
     const requestCover = CoverRequest();
 
+
+    //appels d'api à l'ouverture de la modal
     const updateModal = () => {
 
         if(!props.displayModal){
@@ -25,28 +29,33 @@ const Modal = props => {
             requestMusicBrainz(props.modalData.id)
                 .then(response => response.json())
                 .then(results => setGenresAndRatings(results))
-                .catch(error => setError('Erreur lors de l\'appel à l\'API MusicBrainz'));
+                .catch(error => errorContext.updateError('danger', error, true));
         }
         else if(props.displayModal && !props.modalData.id)
         {
             setGenresAndRatings({});
         }
 
-        if(props.modalData.releases){      
+        if(props.modalData.releases){   
             props.modalData.releases.map(
                 (release, index) => 
                     index+1 === props.modalData.releases.length ? 
-                    requestCover(release.id)
+                    setTimeout(
+                    () => requestCover(release['release-group'].id)
                         .then(response => response.json())
                         .then(results => {cover[index] = results})
                         .then(() => setCover([...cover]))
-                        .catch(error => setError('Album non trouvé'))
-                        .finally(() => props.setLoadingState(false))
+                        .catch(error => errorContext.updateError('info', "image d'album non trouvée", true))
+                        .finally(() => props.setLoadingState(false)), 
+                    500 * index)
                     :
-                    requestCover(release.id)
+                    setTimeout(
+                    () => requestCover(release['release-group'].id)
                     .then(response => response.json())
                     .then(results => {cover[index] = results})
                     .then(() => setCover([...cover]))
+                    .catch(error => errorContext.updateError('info', "image d'album non trouvée", true)),
+                    500 * index)
             )
         }
         else {
@@ -61,14 +70,15 @@ const Modal = props => {
 
 
 
-
+    //vu la taille du composant j'aurai peut-être dû fragmenter 
     return(
-        props.jquery ?
+        props.jquery && props.displayModal ?
         <div className="modal fade show ">
             <div className="modal-dialog modal-dialog-scrollable">
                 <div className="modal-content">
                     <div className="modal-header">
                         <h2>Blah</h2>
+                        <Button type={"button"} classList={"btn-close"} ariaLabel={"Close"} method={props.handleDisplayModal}/>
                     </div>
                 </div>
             </div>
@@ -157,8 +167,6 @@ const Modal = props => {
                             </table>
                             <div className="container">
                                 <h3 className="h5">Images d'albums</h3>
-                                {console.log(cover)}
-
                                 {
                                     cover[0] && Object.keys(cover[0]).length > 0 ?
                                         cover.map(
