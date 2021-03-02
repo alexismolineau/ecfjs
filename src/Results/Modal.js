@@ -53,8 +53,7 @@ const Modal = props => {
                     () => requestCover(release['release-group'].id)
                     .then(response => response.json())
                     .then(results => {cover[index] = results})
-                    .then(() => setCover([...cover]))
-                    .catch(error => errorContext.updateError('info', "image d'album non trouvée", true)),
+                    .then(() => setCover([...cover])),
                     500 * index)
             )
         }
